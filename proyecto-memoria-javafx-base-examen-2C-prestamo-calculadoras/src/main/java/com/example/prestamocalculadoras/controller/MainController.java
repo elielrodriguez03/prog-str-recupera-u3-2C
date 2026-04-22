@@ -53,10 +53,19 @@ public class MainController {
     public void agregar() {
         // TODO:
         // 1. Leer txtNombreSolicitante, txtCantidad y cbTipoCalculadora.
+        String nombre = txtNombreSolicitante.getText();
+        String cantidad = txtCantidad.getText();
+        String tipo = cbTipoCalculadora.getValue();
+
         // 2. Mandar esos datos al service.
+        String error = service.agregar(nombre, cantidad, tipo);
         // 3. Si el service regresa un mensaje, mostrar error.
+        if (error != null){
+            mostrarMensaje("error", error, Alert.AlertType.ERROR);
+        }
         // 4. Si regresa null, refrescar la lista y limpiar.
-        mostrarMensaje("Pendiente", "Completa la lógica de Agregar", Alert.AlertType.INFORMATION);
+        actualizarLista();
+        limpiar();
     }
 
     @FXML
@@ -86,18 +95,29 @@ public class MainController {
         // 1. Primero buscar por nombre o seleccionar desde el ListView.
         // 2. Eso debe cargar los datos en pantalla y guardar nombreOriginal.
         // 3. Luego el usuario modifica txtNombreSolicitante, txtCantidad y cbTipoCalculadora.
+        String nuevonombre = txtNombreSolicitante.getText();
+        String nuevocantidad = txtCantidad.getText();
+        String nuevotipo = cbTipoCalculadora.getValue();
         // 4. Al presionar Actualizar, mandar al service:
+        String error = service.actualizar(nombreOriginal, txtNombreSolicitante.getText(), txtCantidad.getText(), cbTipoCalculadora.getValue());
         //      - nombreOriginal
         //      - txtNombreSolicitante.getText()
         //      - txtCantidad.getText()
         //      - cbTipoCalculadora.getValue()
         // 5. El service debe buscar el registro original usando nombreOriginal.
+
         // 6. Si lo encuentra, debe cambiar sus datos.
-        // 7. Luego refrescar el ListView y limpiar los controles.
+        if (error != null) {
+            mostrarMensaje("Error de Actualización", error, Alert.AlertType.ERROR);
+        } else {
+            // 7. Refrescar y limpiar
+            actualizarLista();
+            limpiar();
+            mostrarMensaje("Éxito", "Registro actualizado correctamente", Alert.AlertType.INFORMATION);
+        }
         //
         // Importante:
         // Si nombreOriginal es null, entonces no se ha buscado ni seleccionado nada.
-        mostrarMensaje("Pendiente", "Completa la lógica de Actualizar", Alert.AlertType.INFORMATION);
     }
 
     @FXML
@@ -108,13 +128,16 @@ public class MainController {
         // Flujo esperado:
         // 1. Tomar el nombre desde txtNombreSolicitante.
         // 2. Mandarlo al service.
+        String nombre = txtNombreSolicitante.getText();
         // 3. El service debe buscarlo y eliminarlo de la lista.
+        String error = service.eliminar(nombre);
         // 4. Refrescar el ListView.
+        actualizarLista();
         // 5. Limpiar controles.
+        limpiar();
         //
         // También se puede seleccionar un elemento del ListView
         // y luego presionar Eliminar.
-        mostrarMensaje("Pendiente", "Completa la lógica de Eliminar", Alert.AlertType.INFORMATION);
     }
 
     @FXML

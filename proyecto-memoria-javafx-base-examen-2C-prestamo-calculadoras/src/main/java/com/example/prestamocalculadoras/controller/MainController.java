@@ -53,10 +53,19 @@ public class MainController {
     public void agregar() {
         // TODO:
         // 1. Leer txtNombreSolicitante, txtCantidad y cbTipoCalculadora.
+        String nombre = txtNombreSolicitante.getText();
+        String cantidad = txtCantidad.getText();
+        String tipo = cbTipoCalculadora.getValue();
         // 2. Mandar esos datos al service.
-        // 3. Si el service regresa un mensaje, mostrar error.
-        // 4. Si regresa null, refrescar la lista y limpiar.
-        mostrarMensaje("Pendiente", "Completa la lógica de Agregar", Alert.AlertType.INFORMATION);
+        String resultado = service.agregar(nombre, cantidad, tipo);
+
+        if (resultado != null) {
+            mostrarMensaje("Error", resultado, Alert.AlertType.ERROR);
+        } else {
+            actualizarLista();
+            limpiar();
+            mostrarMensaje("Éxito", "Registro agregado correctamente", Alert.AlertType.INFORMATION);
+        }
     }
 
     @FXML
@@ -107,6 +116,22 @@ public class MainController {
         //
         // Flujo esperado:
         // 1. Tomar el nombre desde txtNombreSolicitante.
+        String nombreEliminar = txtNombreSolicitante.getText();
+        if (nombreEliminar.isEmpty()) {
+            mostrarMensaje("Atención", "Ingrese o seleccione el nombre del alumno a eliminar", Alert.AlertType.WARNING);
+            return;
+        }
+        boolean eliminado = Boolean.parseBoolean(service.eliminar(nombreEliminar));
+
+        //if (eliminado) {
+            // 4. Refrescar el ListView.
+            // 5. Limpiar controles.
+            actualizarLista();
+            limpiar();
+            mostrarMensaje("Éxito", "Registro eliminado", Alert.AlertType.INFORMATION);
+        //} else {
+         //   mostrarMensaje("Error", "No se encontró el registro para eliminar", Alert.AlertType.ERROR);
+        //}
         // 2. Mandarlo al service.
         // 3. El service debe buscarlo y eliminarlo de la lista.
         // 4. Refrescar el ListView.
@@ -114,7 +139,7 @@ public class MainController {
         //
         // También se puede seleccionar un elemento del ListView
         // y luego presionar Eliminar.
-        mostrarMensaje("Pendiente", "Completa la lógica de Eliminar", Alert.AlertType.INFORMATION);
+        //mostrarMensaje("Pendiente", "Completa la lógica de Eliminar", Alert.AlertType.INFORMATION);
     }
 
     @FXML

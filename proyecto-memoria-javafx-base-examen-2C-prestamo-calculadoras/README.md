@@ -13,12 +13,6 @@ La aplicación registra préstamos de calculadoras dentro del laboratorio. Cada 
 - Cantidad
 - Tipo de calculadora
 
-## Nivel del ejercicio
-Este ejercicio es de **recuperación**, por eso sube **solo un poco** la dificultad respecto a los anteriores.
-
-La diferencia principal es que ahora deben validar un campo numérico:
-- `Cantidad` no debe estar vacía
-- `Cantidad` debe ser un número entero mayor que 0
 
 ## Tecnologías
 - Java 21 Temurin

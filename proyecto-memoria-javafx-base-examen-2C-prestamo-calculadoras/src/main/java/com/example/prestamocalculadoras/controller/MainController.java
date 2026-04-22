@@ -9,7 +9,6 @@ import javafx.scene.control.ListView;
 import javafx.scene.control.TextField;
 
 import java.util.List;
-
 public class MainController {
 
     @FXML
@@ -51,12 +50,24 @@ public class MainController {
 
     @FXML
     public void agregar() {
-        // TODO:
-        // 1. Leer txtNombreSolicitante, txtCantidad y cbTipoCalculadora.
-        // 2. Mandar esos datos al service.
-        // 3. Si el service regresa un mensaje, mostrar error.
-        // 4. Si regresa null, refrescar la lista y limpiar.
-        mostrarMensaje("Pendiente", "Completa la lógica de Agregar", Alert.AlertType.INFORMATION);
+        
+        String nombreSolicitante=txtNombreSolicitante.getText();
+        String cantidadPagar=txtCantidad.getText();
+        String cbTipoCalculadora2=cbTipoCalculadora.getValue();
+        String agregarPersonas= service.agregar(nombreSolicitante,cantidadPagar,cbTipoCalculadora2);
+        if (agregarPersonas!=null){
+     mostrarMensaje("Error al agregar", "No se logro agregar a la persona", Alert.AlertType.WARNING);
+             return;
+            }
+            actualizarLista();
+       limpiar();
+               mostrarMensaje("Persona Agregada con exito", "Se agrego con exito a la persona", Alert.AlertType.INFORMATION);
+
+       
+       
+       
+       
+      
     }
 
     @FXML
@@ -77,44 +88,57 @@ public class MainController {
         nombreOriginal = registro.getNombreSolicitante();
     }
 
-    @FXML
-    public void actualizar() {
-        // TODO:
-        // UPDATE reutiliza los mismos controles.
-        //
-        // Flujo esperado:
-        // 1. Primero buscar por nombre o seleccionar desde el ListView.
-        // 2. Eso debe cargar los datos en pantalla y guardar nombreOriginal.
-        // 3. Luego el usuario modifica txtNombreSolicitante, txtCantidad y cbTipoCalculadora.
-        // 4. Al presionar Actualizar, mandar al service:
-        //      - nombreOriginal
-        //      - txtNombreSolicitante.getText()
-        //      - txtCantidad.getText()
-        //      - cbTipoCalculadora.getValue()
-        // 5. El service debe buscar el registro original usando nombreOriginal.
-        // 6. Si lo encuentra, debe cambiar sus datos.
-        // 7. Luego refrescar el ListView y limpiar los controles.
-        //
-        // Importante:
-        // Si nombreOriginal es null, entonces no se ha buscado ni seleccionado nada.
-        mostrarMensaje("Pendiente", "Completa la lógica de Actualizar", Alert.AlertType.INFORMATION);
+ @FXML
+public void actualizar() {
+
+    // 1. Validar que sí haya un registro seleccionado/buscado
+    if (nombreOriginal == null || nombreOriginal.trim().isEmpty()) {
+        mostrarMensaje("Error", "Primero debes buscar o seleccionar un registro", Alert.AlertType.ERROR);
+        return;
     }
+
+    // 2. Obtener datos de los controles
+    String nombreNuevo = txtNombreSolicitante.getText();
+    String cantidad = txtCantidad.getText();
+    String tipo = cbTipoCalculadora.getValue();
+
+    // 3. Mandar al service
+    String resultado = service.actualizar(
+            nombreOriginal,
+            nombreNuevo,
+            cantidad,
+            tipo
+    );
+
+    // 4. Verificar resultado
+    if (resultado != null) {
+        mostrarMensaje("Error", resultado, Alert.AlertType.ERROR);
+        return;
+    }
+
+    actualizarLista(); 
+
+    limpiar(); 
+
+    // 7. Resetear nombreOriginal
+    nombreOriginal = null;
+
+    // 8. Mensaje de éxito
+    mostrarMensaje("Éxito", "Registro actualizado correctamente", Alert.AlertType.INFORMATION);
+}
 
     @FXML
     public void eliminar() {
-        // TODO:
-        // DELETE sí borra el objeto de la lista.
-        //
-        // Flujo esperado:
-        // 1. Tomar el nombre desde txtNombreSolicitante.
-        // 2. Mandarlo al service.
-        // 3. El service debe buscarlo y eliminarlo de la lista.
-        // 4. Refrescar el ListView.
-        // 5. Limpiar controles.
-        //
-        // También se puede seleccionar un elemento del ListView
-        // y luego presionar Eliminar.
-        mostrarMensaje("Pendiente", "Completa la lógica de Eliminar", Alert.AlertType.INFORMATION);
+    
+    String nombreSolicitante=txtNombreSolicitante.getText();
+     String eliminarPersona=service.eliminar(nombreSolicitante);
+     if (eliminarPersona!=null){
+   mostrarMensaje("Error al eliminar a la persona ", "No se pudo eliminar a la persona ", Alert.AlertType.WARNING);
+     return;
+    }
+    actualizarLista();
+    limpiar ();
+   mostrarMensaje("Persona Eliminada con exito", "Se logro eliminar a la persona con exitoS", Alert.AlertType.INFORMATION);
     }
 
     @FXML
@@ -159,3 +183,6 @@ public class MainController {
         alert.showAndWait();
     }
 }
+
+
+

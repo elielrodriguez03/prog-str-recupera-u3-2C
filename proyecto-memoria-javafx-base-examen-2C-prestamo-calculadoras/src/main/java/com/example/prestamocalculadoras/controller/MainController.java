@@ -52,11 +52,27 @@ public class MainController {
     @FXML
     public void agregar() {
         // TODO:
+
+        String nombre = txtNombreSolicitante.getText();
+        String cantidad = txtCantidad.getText();
+        String calculadora = cbTipoCalculadora.getValue();
+        if (nombre.isEmpty() || cantidad.isEmpty() || calculadora == null){
+            mostrarMensaje("Error", "Los campos son obligatorios", Alert.AlertType.INFORMATION);
+        }
+
+        String nombresolicitante = service.agregar(nombre,cantidad,calculadora);
+
+        if (nombresolicitante != null){
+            mostrarMensaje("Error", "No se agrego", Alert.AlertType.INFORMATION);
+        }else {
+            limpiar();
+            actualizarLista();
+            mostrarMensaje("Exito", "Se agrego", Alert.AlertType.INFORMATION);
+        }
         // 1. Leer txtNombreSolicitante, txtCantidad y cbTipoCalculadora.
         // 2. Mandar esos datos al service.
         // 3. Si el service regresa un mensaje, mostrar error.
         // 4. Si regresa null, refrescar la lista y limpiar.
-        mostrarMensaje("Pendiente", "Completa la lógica de Agregar", Alert.AlertType.INFORMATION);
     }
 
     @FXML
@@ -87,6 +103,18 @@ public class MainController {
         // 2. Eso debe cargar los datos en pantalla y guardar nombreOriginal.
         // 3. Luego el usuario modifica txtNombreSolicitante, txtCantidad y cbTipoCalculadora.
         // 4. Al presionar Actualizar, mandar al service:
+        PrestamoCalculadora registro = service.buscarPorNombreSolicitante(txtNombreSolicitante.getText());
+        if (registro == null) {
+            mostrarMensaje("Aviso", "Registro no encontrado", Alert.AlertType.WARNING);
+            return;
+        }
+        PrestamoCalculadora actualizar = service.actualizar(nombreOriginal,txtNombreSolicitante.getText(),txtCantidad.getText(),cbTipoCalculadora.getValue());
+        txtNombreSolicitante.setText(actualizar.getNombreSolicitante());
+        txtCantidad.setText(actualizar.getCantidad());
+        cbTipoCalculadora.setValue(actualizar.getTipoCalculadora());
+
+        // Este valor es clave para UPDATE.
+        nombreOriginal = actualizar.getNombreSolicitante();
         //      - nombreOriginal
         //      - txtNombreSolicitante.getText()
         //      - txtCantidad.getText()
@@ -107,14 +135,26 @@ public class MainController {
         //
         // Flujo esperado:
         // 1. Tomar el nombre desde txtNombreSolicitante.
+        String nombreeliminar = txtNombreSolicitante.getText();
         // 2. Mandarlo al service.
+        if (nombreeliminar == null){
+            mostrarMensaje("alerta","El nombre que elegiste debe de existir", Alert.AlertType.ERROR);
+        }
+        String nomeliminar = service.eliminar(nombreeliminar);
+
+        if (nomeliminar != null){
+            mostrarMensaje("alerta","No se pudo eliminar", Alert.AlertType.ERROR);
+        }else {
+            limpiar();
+            actualizarLista();
+            mostrarMensaje("Exito", "Se Elimino", Alert.AlertType.INFORMATION);
+        }
         // 3. El service debe buscarlo y eliminarlo de la lista.
         // 4. Refrescar el ListView.
         // 5. Limpiar controles.
         //
         // También se puede seleccionar un elemento del ListView
         // y luego presionar Eliminar.
-        mostrarMensaje("Pendiente", "Completa la lógica de Eliminar", Alert.AlertType.INFORMATION);
     }
 
     @FXML

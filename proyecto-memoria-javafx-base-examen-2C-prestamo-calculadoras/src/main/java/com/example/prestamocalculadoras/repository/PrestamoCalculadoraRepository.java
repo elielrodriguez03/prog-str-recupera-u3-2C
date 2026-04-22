@@ -27,14 +27,14 @@ public class PrestamoCalculadoraRepository {
         return null;
     }
 
-    public boolean eliminarPorNombreSolicitante(String nombreSolicitante) {
+    public PrestamoCalculadora eliminarPorNombreSolicitante(String nombreSolicitante) {
         for (int i = 0; i < registros.size(); i++) {
             PrestamoCalculadora actual = registros.get(i);
             if (actual.getNombreSolicitante().equalsIgnoreCase(nombreSolicitante)) {
                 registros.remove(i);
-                return true;
+                return actual;
             }
         }
-        return false;
+        return null;
     }
 }

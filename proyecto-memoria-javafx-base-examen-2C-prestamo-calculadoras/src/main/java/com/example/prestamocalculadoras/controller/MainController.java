@@ -11,7 +11,6 @@ import javafx.scene.control.TextField;
 import java.util.List;
 
 public class MainController {
-
     @FXML
     private TextField txtNombreSolicitante;
 
@@ -26,7 +25,6 @@ public class MainController {
 
     private final PrestamoCalculadoraService service = new PrestamoCalculadoraService();
 
-    // Aquí se guarda el nombre original del registro encontrado o seleccionado.
     private String nombreOriginal;
 
     @FXML
@@ -34,7 +32,6 @@ public class MainController {
         cargarTipos();
         actualizarLista();
 
-        // También se puede cargar un registro seleccionándolo en el ListView.
         lvRegistros.getSelectionModel().selectedItemProperty().addListener((observable, oldValue, newValue) -> {
             if (newValue != null) {
                 cargarSeleccion(newValue);
@@ -51,12 +48,18 @@ public class MainController {
 
     @FXML
     public void agregar() {
-        // TODO:
-        // 1. Leer txtNombreSolicitante, txtCantidad y cbTipoCalculadora.
-        // 2. Mandar esos datos al service.
-        // 3. Si el service regresa un mensaje, mostrar error.
-        // 4. Si regresa null, refrescar la lista y limpiar.
-        mostrarMensaje("Pendiente", "Completa la lógica de Agregar", Alert.AlertType.INFORMATION);
+        String nombre = txtNombreSolicitante.getText();
+        String cantidad = txtCantidad.getText();
+        String tipo = cbTipoCalculadora.getValue();
+
+        String error = service.agregar(nombre, cantidad, tipo);
+
+        if (error != null) {
+            mostrarMensaje("Error de validación", error, Alert.AlertType.ERROR);
+        } else {
+            actualizarLista();
+            limpiar();
+        }
     }
 
     @FXML
@@ -73,48 +76,41 @@ public class MainController {
         txtCantidad.setText(registro.getCantidad());
         cbTipoCalculadora.setValue(registro.getTipoCalculadora());
 
-        // Este valor es clave para UPDATE.
+
         nombreOriginal = registro.getNombreSolicitante();
     }
 
     @FXML
     public void actualizar() {
-        // TODO:
-        // UPDATE reutiliza los mismos controles.
-        //
-        // Flujo esperado:
-        // 1. Primero buscar por nombre o seleccionar desde el ListView.
-        // 2. Eso debe cargar los datos en pantalla y guardar nombreOriginal.
-        // 3. Luego el usuario modifica txtNombreSolicitante, txtCantidad y cbTipoCalculadora.
-        // 4. Al presionar Actualizar, mandar al service:
-        //      - nombreOriginal
-        //      - txtNombreSolicitante.getText()
-        //      - txtCantidad.getText()
-        //      - cbTipoCalculadora.getValue()
-        // 5. El service debe buscar el registro original usando nombreOriginal.
-        // 6. Si lo encuentra, debe cambiar sus datos.
-        // 7. Luego refrescar el ListView y limpiar los controles.
-        //
-        // Importante:
-        // Si nombreOriginal es null, entonces no se ha buscado ni seleccionado nada.
-        mostrarMensaje("Pendiente", "Completa la lógica de Actualizar", Alert.AlertType.INFORMATION);
+        String nombreNuevo = txtNombreSolicitante.getText();
+        String cantidad = txtCantidad.getText();
+        String tipo = cbTipoCalculadora.getValue();
+
+        // nombreOriginal se llenó en buscar() o cargarSeleccion()
+        String error = service.actualizar(nombreOriginal, nombreNuevo, cantidad, tipo);
+
+        if (error != null) {
+            mostrarMensaje("Error al actualizar", error, Alert.AlertType.ERROR);
+        } else {
+            actualizarLista();
+            limpiar();
+            mostrarMensaje("Éxito", "Registro actualizado correctamente", Alert.AlertType.INFORMATION);
+        }
     }
 
     @FXML
     public void eliminar() {
-        // TODO:
-        // DELETE sí borra el objeto de la lista.
-        //
-        // Flujo esperado:
-        // 1. Tomar el nombre desde txtNombreSolicitante.
-        // 2. Mandarlo al service.
-        // 3. El service debe buscarlo y eliminarlo de la lista.
-        // 4. Refrescar el ListView.
-        // 5. Limpiar controles.
-        //
-        // También se puede seleccionar un elemento del ListView
-        // y luego presionar Eliminar.
-        mostrarMensaje("Pendiente", "Completa la lógica de Eliminar", Alert.AlertType.INFORMATION);
+        String nombre = txtNombreSolicitante.getText();
+
+        String error = service.eliminar(nombre);
+
+        if (error != null) {
+            mostrarMensaje("Error al eliminar", error, Alert.AlertType.ERROR);
+        } else {
+            actualizarLista();
+            limpiar();
+            mostrarMensaje("Éxito", "Registro eliminado exitosamente", Alert.AlertType.INFORMATION);
+        }
     }
 
     @FXML

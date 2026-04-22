@@ -6,10 +6,8 @@ import com.example.prestamocalculadoras.repository.PrestamoCalculadoraRepository
 import java.util.List;
 
 public class PrestamoCalculadoraService {
-
     private final PrestamoCalculadoraRepository repository = new PrestamoCalculadoraRepository();
-
-    private final String[] tipos = {"Básica", "Científica", "Gráfica"};
+    private final String[] tipos = {"Cientifica", "Grafica"};
 
     public String[] obtenerTipos() {
         return tipos;
@@ -27,54 +25,58 @@ public class PrestamoCalculadoraService {
     }
 
     public String agregar(String nombreSolicitante, String cantidad, String tipoCalculadora) {
-        // TODO:
-        // 1. Validar que nombreSolicitante no esté vacío.
-        // 2. Validar que cantidad no esté vacía.
-        // 3. Validar que cantidad sea un número entero mayor que 0.
-        // 4. Validar que tipoCalculadora no sea null.
-        // 5. Validar que no exista otro registro con el mismo nombreSolicitante.
-        // 6. Si todo está bien, crear un objeto PrestamoCalculadora y guardarlo en repository.
-        // 7. Regresar null cuando el registro se guarde correctamente.
-        return "Completa la lógica de agregar en el service";
-    }
 
-    public String actualizar(String nombreOriginal, String nombreNuevo, String cantidad, String tipoCalculadora) {
-        // TODO:
-        // 1. Validar que nombreOriginal no sea null ni vacío.
-        // 2. Validar que nombreNuevo no esté vacío.
-        // 3. Validar que cantidad no esté vacía.
-        // 4. Validar que cantidad sea un número entero mayor que 0.
-        // 5. Validar que tipoCalculadora no sea null.
-        // 6. Buscar el registro original usando nombreOriginal.
-        // 7. Si no existe, regresar mensaje de error.
-        // 8. Si el nombre cambió, validar que el nuevo nombre no esté repetido.
-        // 9. Si todo está bien, actualizar los atributos del objeto encontrado.
-        // 10. Regresar null si todo salió bien.
-        return "Completa la lógica de actualizar en el service";
-    }
+        if (nombreSolicitante == null || nombreSolicitante.trim().isEmpty()) return "DEbes ingresar el nombre del solicitante.";
+        if (cantidad == null ||cantidad.isEmpty() || cantidad.equals("0")) return "La cantidad no puede sr vacia y debe ser mayor a cero";
+        if (tipoCalculadora == null) return "Debes seleccionar un tipo de calculadora.";
 
-    public String eliminar(String nombreSolicitante) {
-        // TODO:
-        // 1. Validar que nombreSolicitante no esté vacío.
-        // 2. Buscar si existe el registro.
-        // 3. Si no existe, regresar mensaje de error.
-        // 4. Si existe, eliminarlo desde repository.
-        // 5. Regresar null si se eliminó correctamente.
-        return "Completa la lógica de eliminar en el service";
-    }
-
-    // Método de ejemplo: les puede servir como apoyo para la validación numérica.
-    public boolean esCantidadValida(String cantidad) {
-        if (cantidad == null || cantidad.trim().isEmpty()) {
-            return false;
+        if (repository.buscarPorNombreSolicitante(nombreSolicitante.trim()) != null) {
+            return "ESte registro ya existe.";
         }
 
-        for (int i = 0; i < cantidad.length(); i++) {
-            if (!Character.isDigit(cantidad.charAt(i))) {
-                return false;
+        PrestamoCalculadora nuevo = new PrestamoCalculadora(nombreSolicitante.trim(), cantidad.trim(), tipoCalculadora.trim());
+        repository.guardar(nuevo);
+
+
+        return null;
+    }
+
+    public String actualizar(String nombreOriginal, String nombreNuevo, String cantidadNuevo, String tipoNuevo) {
+
+        if (nombreOriginal == null || nombreOriginal.isEmpty()) return "No hay un registro seleccionado para actualizar.";
+
+
+        PrestamoCalculadora registro = repository.buscarPorNombreSolicitante(nombreOriginal);
+        if (registro == null) return "El registro original ya no existe.";
+
+
+        if (nombreNuevo == null || nombreNuevo.trim().isEmpty()) return "El nuevo nombre no puede estar vacío.";
+        if (cantidadNuevo == null || cantidadNuevo.trim().isEmpty()) return "LA cantidad no puede ser vacia.";
+
+
+        if (!nombreOriginal.equalsIgnoreCase(nombreNuevo.trim())) {
+            if (repository.buscarPorNombreSolicitante(nombreNuevo.trim()) != null) {
+                return "El Nuevo nombre ya existe.";
             }
         }
 
-        return Integer.parseInt(cantidad) > 0;
+
+        registro.setNombreSolicitante(nombreNuevo.trim());
+        registro.setCantidad(cantidadNuevo.trim());
+        registro.setTipoCalculadora(tipoNuevo);
+
+        return null;
+    }
+
+    public String eliminar(String nombreSolicitante) {
+
+        if (nombreSolicitante == null || nombreSolicitante.trim().isEmpty()) return "Debes ingresar el nombre del solicitante que quieres eliminar.";
+
+
+        boolean eliminado = repository.eliminarPorNombreSolicitante(nombreSolicitante.trim());
+        if (!eliminado) {
+            return "No se encontró el solicitante para eliminar.";
+        }
+        return null;
     }
 }
